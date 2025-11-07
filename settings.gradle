@@ -1,4 +1,4 @@
 rootProject.name = 'firefighter'
-include 'src:main:aapp'
-findProject(':src:main:aapp')?.name = 'aapp'
+//include 'src:main:aapp'
+//findProject(':src:main:aapp')?.name = 'aapp'
 
