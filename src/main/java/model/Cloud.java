@@ -2,10 +2,7 @@ package model;
 
 import util.Position;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Cloud {
   private Position position ;
@@ -24,19 +21,29 @@ public class Cloud {
     position = newPosition ;
   }
 
-  public List<Position>  act(Fire fire , Map<Position , List<Position>> neighbors) {
+  public List<Position> act(Fire fire,
+    Map<Position, List<Position>> neighbors,
+    Set<Position> mountainPositions) {
     List<Position> modifiedPositions = new ArrayList<>();
 
-    List<Position> possibleMoves = neighbors.get(position);
-    if(! possibleMoves.isEmpty()) {
-      position = possibleMoves.get( random.nextInt(possibleMoves.size()));
+    Position oldPosition = position;
+
+    List<Position> possibleMoves = neighbors.get(position)
+                                            .stream()
+                                            .filter(p -> !mountainPositions.contains(p))
+                                            .toList();
+
+    if (!possibleMoves.isEmpty()) {
+      position = possibleMoves.get(random.nextInt(possibleMoves.size()));
     }
+
+    // Ajouter l’ancienne et la nouvelle position dans la liste modifiée
+    modifiedPositions.add(oldPosition);
     modifiedPositions.add(position);
 
     fire.extinguish(position);
 
-    List<Position> around = neighbors.get(position);
-    for (Position p : around) {
+    for (Position p : neighbors.get(position)) {
       if (fire.isOnFire(p)) {
         fire.extinguish(p);
         modifiedPositions.add(p);
@@ -45,4 +52,5 @@ public class Cloud {
 
     return modifiedPositions;
   }
+
 }

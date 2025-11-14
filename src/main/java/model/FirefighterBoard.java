@@ -11,12 +11,18 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
   private final Position[][] positions;
   private final Random randomGenerator = new Random();
   private int step = 0;
-  private List<Cloud> clouds;
-  private final int initialCloudCount = 3;
+
+
 
   private List<Firefighter> firefighters;
   private Fire fire;
   private Map<Position, List<Position>> neighbors = new HashMap<>();
+
+  private List<Cloud> clouds;
+  private final int initialCloudCount = 3;
+
+  private Set<Position> mountainPosition = new HashSet<>();
+  private final int initialMaountainCount = 3 ;
 
   public FirefighterBoard(int columnCount, int rowCount, int initialFireCount, int initialFirefighterCount) {
     this.columnCount = columnCount;
@@ -61,7 +67,11 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
     for (int i = 0; i < initialCloudCount; i++)
       clouds.add(new Cloud(randomPosition()));
 
+    for (int i = 0 ; i < initialMaountainCount ; i++) {
+      mountainPosition.add(randomPosition()) ;
+    }
   }
+
 
   private Position randomPosition() {
     return new Position(randomGenerator.nextInt(rowCount), randomGenerator.nextInt(columnCount));
@@ -79,6 +89,12 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
     for (Cloud c : clouds)
       if (c.getPosition().equals(position))
         result.add(ModelElement.CLOUD);
+
+    for(Position p : mountainPosition){
+      if (p.equals(position))
+        result.add(ModelElement.MOUNTAIN);
+    }
+
 
     return result;
   }
@@ -123,14 +139,14 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
 
     // Les pompiers agissent
     for (Firefighter f : firefighters)
-      modified.addAll(f.act(fire, neighbors));
+      modified.addAll(f.act(fire, neighbors ,  mountainPosition));
 
     // ☁️ Les nuages agissent
     for (Cloud c : clouds)
-      modified.addAll(c.act(fire, neighbors));
+      modified.addAll(c.act(fire, neighbors , mountainPosition));
 
     // Le feu se propage
-    modified.addAll(fire.spread(step, neighbors));
+    modified.addAll(fire.spread(step, neighbors , mountainPosition));
 
     step++;
     return modified;

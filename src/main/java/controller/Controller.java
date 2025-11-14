@@ -91,6 +91,9 @@ public class Controller {
     if (squareState.contains(ModelElement.CLOUD)) {
       return ViewElement.CLOUD; // ☁️ affichera la case en noir
     }
+    if (squareState.contains(ModelElement.MOUNTAIN)){
+      return ViewElement.MOUNTAIN;
+    }
     return ViewElement.EMPTY;
   }
 

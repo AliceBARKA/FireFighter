@@ -6,6 +6,7 @@ import util.TargetStrategy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Firefighter {
     private Position position;
@@ -23,11 +24,12 @@ public class Firefighter {
         this.position = newPosition;
     }
 
-    public List<Position> act(Fire fire, Map<Position, List<Position>> neighbors) {
+    public List<Position> act(Fire fire, Map<Position, List<Position>> neighbors , Set<Position> mountainPositions) {
         List<Position> modifiedPositions = new ArrayList<>();
 
         // Déplacement vers le feu le plus proche
-        Position newPosition = targetStrategy.neighborClosestToFire(position, fire.getFirePositions(), neighbors);
+        Position newPosition = targetStrategy.neighborClosestToFire(position,
+          fire.getFirePositions(), neighbors , mountainPositions);
         modifiedPositions.add(position);
         modifiedPositions.add(newPosition);
 
