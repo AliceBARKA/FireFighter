@@ -11,6 +11,8 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
   private final Position[][] positions;
   private final Random randomGenerator = new Random();
   private int step = 0;
+  private List<Cloud> clouds;
+  private final int initialCloudCount = 3;
 
   private List<Firefighter> firefighters;
   private Fire fire;
@@ -53,7 +55,12 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
 
     this.fire = new Fire(firePositions);
     this.firefighters = firefighterList;
-    this.step = 0;
+    //this.step = 0;
+
+    clouds = new ArrayList<>();
+    for (int i = 0; i < initialCloudCount; i++)
+      clouds.add(new Cloud(randomPosition()));
+
   }
 
   private Position randomPosition() {
@@ -68,6 +75,11 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
     for (Firefighter f : firefighters)
       if (f.getPosition().equals(position))
         result.add(ModelElement.FIREFIGHTER);
+
+    for (Cloud c : clouds)
+      if (c.getPosition().equals(position))
+        result.add(ModelElement.CLOUD);
+
     return result;
   }
 
@@ -112,6 +124,10 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
     // Les pompiers agissent
     for (Firefighter f : firefighters)
       modified.addAll(f.act(fire, neighbors));
+
+    // ☁️ Les nuages agissent
+    for (Cloud c : clouds)
+      modified.addAll(c.act(fire, neighbors));
 
     // Le feu se propage
     modified.addAll(fire.spread(step, neighbors));

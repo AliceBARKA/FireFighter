@@ -88,6 +88,9 @@ public class Controller {
     if (squareState.contains(ModelElement.FIRE)){
       return ViewElement.FIRE;
     }
+    if (squareState.contains(ModelElement.CLOUD)) {
+      return ViewElement.CLOUD; // ☁️ affichera la case en noir
+    }
     return ViewElement.EMPTY;
   }
 
