@@ -1,5 +1,6 @@
 package model;
 
+import javafx.geometry.Pos;
 import util.Position;
 import java.util.*;
 
@@ -23,6 +24,9 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
 
   private Set<Position> mountainPosition = new HashSet<>();
   private final int initialMaountainCount = 3 ;
+
+  private Set<Position> roadPosition = new HashSet<>() ;
+  //private final int initialRoadCount = 10 ;
 
   public FirefighterBoard(int columnCount, int rowCount, int initialFireCount, int initialFirefighterCount) {
     this.columnCount = columnCount;
@@ -55,9 +59,9 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
     List<Firefighter> firefighterList = new ArrayList<>();
 
     for (int i = 0; i < initialFireCount; i++)
-      firePositions.add(randomPosition());
+      firePositions.add(randomFreePosition());
     for (int i = 0; i < initialFirefighterCount; i++)
-      firefighterList.add(new Firefighter(randomPosition()));
+      firefighterList.add(new Firefighter(randomFreePosition()));
 
     this.fire = new Fire(firePositions);
     this.firefighters = firefighterList;
@@ -65,10 +69,25 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
 
     clouds = new ArrayList<>();
     for (int i = 0; i < initialCloudCount; i++)
-      clouds.add(new Cloud(randomPosition()));
+      clouds.add(new Cloud(randomFreePosition()));
 
     for (int i = 0 ; i < initialMaountainCount ; i++) {
-      mountainPosition.add(randomPosition()) ;
+      mountainPosition.add(randomFreePosition()) ;
+    }
+
+
+    // initilaiser une route forme L
+    int midRow = rowCount / 2;
+    int midCol = columnCount / 2;
+
+    // horizontale
+    for (int col = 0; col < columnCount; col++) {
+      roadPosition.add(new Position(midRow, col));
+    }
+
+    // verticale
+    for (int row = 0; row < rowCount; row++) {
+      roadPosition.add(new Position(row, midCol));
     }
   }
 
@@ -93,6 +112,11 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
     for(Position p : mountainPosition){
       if (p.equals(position))
         result.add(ModelElement.MOUNTAIN);
+    }
+
+    for(Position p : roadPosition) {
+      if (p.equals(position))
+        result.add(ModelElement.ROAD);
     }
 
 
@@ -143,12 +167,21 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
 
     // ☁️ Les nuages agissent
     for (Cloud c : clouds)
-      modified.addAll(c.act(fire, neighbors , mountainPosition));
+      modified.addAll(c.act(fire, neighbors , mountainPosition , roadPosition));
 
     // Le feu se propage
-    modified.addAll(fire.spread(step, neighbors , mountainPosition));
+    modified.addAll(fire.spread(step, neighbors , mountainPosition , roadPosition));
 
     step++;
     return modified;
   }
+
+  private Position randomFreePosition() {
+    Position p;
+    do {
+      p = randomPosition();
+    } while (roadPosition.contains(p)); // On évite la route
+    return p;
+  }
+
 }

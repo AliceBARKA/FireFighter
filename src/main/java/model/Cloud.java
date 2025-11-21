@@ -23,14 +23,16 @@ public class Cloud {
 
   public List<Position> act(Fire fire,
     Map<Position, List<Position>> neighbors,
-    Set<Position> mountainPositions) {
+    Set<Position> mountainPositions,
+    Set<Position> roadPositions ) {
     List<Position> modifiedPositions = new ArrayList<>();
 
     Position oldPosition = position;
 
     List<Position> possibleMoves = neighbors.get(position)
                                             .stream()
-                                            .filter(p -> !mountainPositions.contains(p))
+                                            .filter(p ->  !mountainPositions.contains(p)
+                                                       && !roadPositions.contains(p))
                                             .toList();
 
     if (!possibleMoves.isEmpty()) {

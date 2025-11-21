@@ -15,14 +15,14 @@ public class Fire {
     }
 
     public List<Position> spread(int step, Map<Position, List<Position>> neighbors ,
-                           Set<Position> mountainPositions) {
+                           Set<Position> mountainPositions , Set<Position> roadPosition) {
         List<Position> modified = new ArrayList<>();
         if (step % 2 == 0) {
             List<Position> newFirePositions = new ArrayList<>();
             for (Position fire : firePositions) {
                 for (Position neighbor : neighbors.get(fire)) {
-                    // 🔥 Se propage uniquement si ce n’est pas une montagne
-                    if (!mountainPositions.contains(neighbor)) {
+                    // 🔥 Se propage uniquement si ce n’est pas une montagne ou routes
+                    if (!mountainPositions.contains(neighbor) && !roadPosition.contains(neighbor)) {
                         newFirePositions.add(neighbor);
                     }
                 }

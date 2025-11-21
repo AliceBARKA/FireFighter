@@ -89,10 +89,13 @@ public class Controller {
       return ViewElement.FIRE;
     }
     if (squareState.contains(ModelElement.CLOUD)) {
-      return ViewElement.CLOUD; // ☁️ affichera la case en noir
+      return ViewElement.CLOUD; //  affichera la case en noir
     }
     if (squareState.contains(ModelElement.MOUNTAIN)){
       return ViewElement.MOUNTAIN;
+    }
+    if(squareState.contains(ModelElement.ROAD)){
+      return ViewElement.ROAD ;
     }
     return ViewElement.EMPTY;
   }
