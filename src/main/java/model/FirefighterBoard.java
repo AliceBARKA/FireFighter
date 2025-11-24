@@ -60,8 +60,16 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
 
     for (int i = 0; i < initialFireCount; i++)
       firePositions.add(randomFreePosition());
-    for (int i = 0; i < initialFirefighterCount; i++)
-      firefighterList.add(new Firefighter(randomFreePosition()));
+
+    for (int i = 0; i < initialFirefighterCount; i++) {
+      Position pos = randomFreePosition();
+
+      if (i % 2 == 0) { // i = 0,2,4,... → motorisés
+        firefighterList.add(new MotorizedFirefighter(pos));
+      } else {          // i = 1,3,5,... → normaux
+        firefighterList.add(new Firefighter(pos));
+      }
+    }
 
     this.fire = new Fire(firePositions);
     this.firefighters = firefighterList;
@@ -101,9 +109,16 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
     List<ModelElement> result = new ArrayList<>();
     if (fire.isOnFire(position))
       result.add(ModelElement.FIRE);
-    for (Firefighter f : firefighters)
-      if (f.getPosition().equals(position))
-        result.add(ModelElement.FIREFIGHTER);
+
+    for (Firefighter f : firefighters) {
+      if (f.getPosition().equals(position)) {
+        if (f instanceof MotorizedFirefighter) {
+          result.add(ModelElement.MOTORIZED_FIREFIGHTER);
+        } else {
+          result.add(ModelElement.FIREFIGHTER);
+        }
+      }
+    }
 
     for (Cloud c : clouds)
       if (c.getPosition().equals(position))
@@ -146,14 +161,14 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
   @Override
   public void setState(List<ModelElement> state, Position position) {
     fire.getFirePositions().remove(position);
-    for (Firefighter f : firefighters)
-      if (f.getPosition().equals(position))
-        firefighters.remove(f);
+    // Retirer les pompiers (normaux ou motorisé) sur cette case
+    firefighters.removeIf(f -> f.getPosition().equals(position));
 
     for (ModelElement element : state) {
       switch (element) {
         case FIRE -> fire.getFirePositions().add(position);
         case FIREFIGHTER -> firefighters.add(new Firefighter(position));
+        case MOTORIZED_FIREFIGHTER -> firefighters.add(new MotorizedFirefighter(position));
       }
     }
   }
@@ -165,7 +180,7 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
     for (Firefighter f : firefighters)
       modified.addAll(f.act(fire, neighbors ,  mountainPosition));
 
-    // ☁️ Les nuages agissent
+    // Les nuages agissent
     for (Cloud c : clouds)
       modified.addAll(c.act(fire, neighbors , mountainPosition , roadPosition));
 

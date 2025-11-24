@@ -10,7 +10,8 @@ import java.util.Set;
 
 public class Firefighter {
     private Position position;
-    private final TargetStrategy targetStrategy = new TargetStrategy();
+    // protected pour que les sous-classes puissent l'utiliser
+    protected final TargetStrategy targetStrategy = new TargetStrategy();
 
     public Firefighter(Position startPosition) {
         this.position = startPosition;
@@ -24,12 +25,33 @@ public class Firefighter {
         this.position = newPosition;
     }
 
-    public List<Position> act(Fire fire, Map<Position, List<Position>> neighbors , Set<Position> mountainPositions) {
+    /**
+     * Un pompier normal : un déplacement par tour.
+     */
+    public List<Position> act(Fire fire,
+                              Map<Position, List<Position>> neighbors,
+                              Set<Position> mountainPositions) {
+        return moveAndExtinguishOnce(fire, neighbors, mountainPositions);
+    }
+
+    /**
+     * Une "mini-action" réutilisable :
+     *  - se déplacer d'une case vers le feu
+     *  - éteindre sur la case
+     *  - éteindre autour
+     */
+    protected List<Position> moveAndExtinguishOnce(Fire fire,
+                                                   Map<Position, List<Position>> neighbors,
+                                                   Set<Position> mountainPositions) {
         List<Position> modifiedPositions = new ArrayList<>();
 
-        // Déplacement vers le feu le plus proche
-        Position newPosition = targetStrategy.neighborClosestToFire(position,
-          fire.getFirePositions(), neighbors , mountainPositions);
+        // Déplacement vers le feu le plus proche (en tenant compte des montagnes)
+        Position newPosition = targetStrategy.neighborClosestToFire(
+                position,
+                fire.getFirePositions(),
+                neighbors,
+                mountainPositions
+        );
         modifiedPositions.add(position);
         modifiedPositions.add(newPosition);
 
