@@ -100,6 +100,9 @@ public class Controller {
     if(squareState.contains(ModelElement.ROAD)){
       return ViewElement.ROAD ;
     }
+    if (squareState.contains(ModelElement.ROCK))
+      return ViewElement.ROCK;
+
     return ViewElement.EMPTY;
   }
 

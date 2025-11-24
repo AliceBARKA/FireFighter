@@ -27,6 +27,9 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
 
   private Set<Position> roadPosition = new HashSet<>() ;
   //private final int initialRoadCount = 10 ;
+  private Set<Position> rockPositions = new HashSet<>();
+  private final int initialRockCount = 5;
+
 
   public FirefighterBoard(int columnCount, int rowCount, int initialFireCount, int initialFirefighterCount) {
     this.columnCount = columnCount;
@@ -83,6 +86,10 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
       mountainPosition.add(randomFreePosition()) ;
     }
 
+    for (int i = 0 ; i < initialRockCount ; i++) {
+      rockPositions.add(randomFreePosition()) ;
+    }
+
 
     // initilaiser une route forme L
     int midRow = rowCount / 2;
@@ -97,6 +104,9 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
     for (int row = 0; row < rowCount; row++) {
       roadPosition.add(new Position(row, midCol));
     }
+
+
+
   }
 
 
@@ -132,6 +142,10 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
     for(Position p : roadPosition) {
       if (p.equals(position))
         result.add(ModelElement.ROAD);
+    }
+    for (Position p : rockPositions) {
+      if (p.equals(position))
+        result.add(ModelElement.ROCK);
     }
 
 
@@ -169,6 +183,7 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
         case FIRE -> fire.getFirePositions().add(position);
         case FIREFIGHTER -> firefighters.add(new Firefighter(position));
         case MOTORIZED_FIREFIGHTER -> firefighters.add(new MotorizedFirefighter(position));
+
       }
     }
   }
@@ -185,7 +200,7 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
       modified.addAll(c.act(fire, neighbors , mountainPosition , roadPosition));
 
     // Le feu se propage
-    modified.addAll(fire.spread(step, neighbors , mountainPosition , roadPosition));
+    modified.addAll(fire.spread(step, neighbors , mountainPosition , roadPosition , rockPositions));
 
     step++;
     return modified;
@@ -195,7 +210,8 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
     Position p;
     do {
       p = randomPosition();
-    } while (roadPosition.contains(p)); // On évite la route
+    } while (roadPosition.contains(p)|| mountainPosition.contains(p)
+            || rockPositions.contains(p)); // On évite la route , montagne, rocaille
     return p;
   }
 
