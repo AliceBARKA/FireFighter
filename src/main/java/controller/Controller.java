@@ -92,7 +92,7 @@ public class Controller {
       return ViewElement.MOTORIZED_FIREFIGHTER;
     }
     if (squareState.contains(ModelElement.CLOUD)) {
-      return ViewElement.CLOUD; //  affichera la case en noir
+      return ViewElement.CLOUD;
     }
     if (squareState.contains(ModelElement.MOUNTAIN)){
       return ViewElement.MOUNTAIN;
