@@ -1,5 +1,6 @@
 package model;
 
+import util.MovementStrategy;
 import util.Position;
 
 import java.util.ArrayList;
@@ -7,24 +8,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class MotorizedFirefighter extends Firefighter {
+public class MotorizedFirefighter extends AbstractFirefighter {
 
-    public MotorizedFirefighter(Position startPosition) {
-        super(startPosition);
+    public MotorizedFirefighter(Position startPosition, MovementStrategy movementStrategy) {
+        super(startPosition, movementStrategy);
     }
 
     @Override
-    public List<Position> act(Fire fire,
-                              Map<Position, List<Position>> neighbors,
-                              Set<Position> mountainPositions) {
-        List<Position> modified = new ArrayList<>();
+    protected int stepsPerTurn() {
+        return 2;
+    }
 
-        // 1er déplacement + extinction
-        modified.addAll(moveAndExtinguishOnce(fire, neighbors, mountainPositions));
-
-        // 2e déplacement + extinction
-        modified.addAll(moveAndExtinguishOnce(fire, neighbors, mountainPositions));
-
-        return modified;
+    @Override
+    public ModelElement getModelElement() {
+        return ModelElement.MOTORIZED_FIREFIGHTER;
     }
 }
