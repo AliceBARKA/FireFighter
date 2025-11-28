@@ -163,7 +163,7 @@ public class FirefighterBoard implements Board<List<ModelElement>> {
   public List<ModelElement> getState(Position position) {
     List<ModelElement> result = new ArrayList<>();
 
-    // Terrain d'abord
+
     TerrainType type = terrainPolicy.terrainAt(position);
     switch (type) {
       case MOUNTAIN -> result.add(ModelElement.MOUNTAIN);
